@@ -31,6 +31,7 @@ class SkizzeLexer:
             self.advance()
 
     def read_number(self):
+        start_line, start_col = self.line, self.col
         seen_dot = False
         num = ""
         while self.current() is not None and (
@@ -40,18 +41,22 @@ class SkizzeLexer:
                 seen_dot = True
             num += self.current()
             self.advance()
-        return ST(STK.NUMBER, float(num) if seen_dot else int(num), self.line, self.col)
+        return ST(
+            STK.NUMBER, float(num) if seen_dot else int(num), start_line, start_col
+        )
 
     def read_string(self):
+        start_line, start_col = self.line, self.col
         self.advance()  # skip opening "
         string = ""
         while self.current() is not None and self.current() != '"':
             string += self.current()
             self.advance()
         self.advance()  # skip closing "
-        return ST(STK.STRING, string, self.line, self.col)
+        return ST(STK.STRING, string, start_line, start_col)
 
     def read_ident(self):
+        start_line, start_col = self.line, self.col
         ident = ""
         while self.current() is not None and (
             self.current().isalnum() or self.current() == "_"
@@ -60,7 +65,7 @@ class SkizzeLexer:
             self.advance()
         kind = SK.get(ident, STK.IDENT)
         value = ident if kind == STK.IDENT else None
-        return ST(kind, value, self.line, self.col)
+        return ST(kind, value, start_line, start_col)
 
     def tokenize(self):
         while self.current() is not None:
