@@ -1,7 +1,9 @@
-import skizze_token as st
+from skizze_token import SKIZZE_KEYWORDS as SK
+from skizze_token import SkizzeToken as ST
+from skizze_token import SkizzeTokenKind as STK
 
 
-class Lexer:
+class SkizzeLexer:
     def __init__(self, source: str):
         self.source = source
         self.pos = 0  # current character index
@@ -34,7 +36,7 @@ class Lexer:
                 seen_dot = True
             num += self.current()
             self.advance()
-        return st.Token(st.TokenKind.NUMBER, float(num) if seen_dot else int(num))
+        return ST(STK.NUMBER, float(num) if seen_dot else int(num))
 
     def read_string(self):
         self.advance()  # skip opening "
@@ -43,7 +45,7 @@ class Lexer:
             string += self.current()
             self.advance()
         self.advance()  # skip closing "
-        return st.Token(st.TokenKind.STRING, string)
+        return ST(STK.STRING, string)
 
     def read_ident(self):
         ident = ""
@@ -52,9 +54,9 @@ class Lexer:
         ):
             ident += self.current()
             self.advance()
-        kind = st.KEYWORDS.get(ident, st.TokenKind.IDENT)
-        value = ident if kind == st.TokenKind.IDENT else None
-        return st.Token(kind, value)
+        kind = SK.get(ident, STK.IDENT)
+        value = ident if kind == STK.IDENT else None
+        return ST(kind, value)
 
     def tokenize(self):
         while self.current() is not None:
@@ -63,59 +65,59 @@ class Lexer:
             if curr is None:
                 break
             if curr == "+":
-                self.tokens.append(st.Token(st.TokenKind.PLUS, "+"))
+                self.tokens.append(ST(STK.PLUS, "+"))
                 self.advance()
             elif curr == "-":
-                self.tokens.append(st.Token(st.TokenKind.MINUS, "-"))
+                self.tokens.append(ST(STK.MINUS, "-"))
                 self.advance()
             elif curr == "*":
-                self.tokens.append(st.Token(st.TokenKind.STAR, "*"))
+                self.tokens.append(ST(STK.STAR, "*"))
                 self.advance()
             elif curr == "/":
-                self.tokens.append(st.Token(st.TokenKind.SLASH, "/"))
+                self.tokens.append(ST(STK.SLASH, "/"))
                 self.advance()
             elif curr == "=":
                 if self.peek() == "=":
                     self.advance()
-                    self.tokens.append(st.Token(st.TokenKind.EQ, "=="))
+                    self.tokens.append(ST(STK.EQ, "=="))
                     self.advance()
-                self.tokens.append(st.Token(st.TokenKind.ASSIGN, "="))
+                self.tokens.append(ST(STK.ASSIGN, "="))
                 self.advance()
             elif curr == "!":
                 if self.peek() == "=":
                     self.advance()
-                    self.tokens.append(st.Token(st.TokenKind.NEQ, "!="))
+                    self.tokens.append(ST(STK.NEQ, "!="))
                     self.advance()
                 else:
                     raise SyntaxError("Unexpected character: '!'")
             elif curr == "<":
                 if self.peek() == "=":
                     self.advance()
-                    self.tokens.append(st.Token(st.TokenKind.LTE, "<="))
+                    self.tokens.append(ST(STK.LTE, "<="))
                     self.advance()
-                self.tokens.append(st.Token(st.TokenKind.LT, "<"))
+                self.tokens.append(ST(STK.LT, "<"))
                 self.advance()
             elif curr == ">":
                 if self.peek() == "=":
                     self.advance()
-                    self.tokens.append(st.Token(st.TokenKind.GTE, ">="))
+                    self.tokens.append(ST(STK.GTE, ">="))
                     self.advance()
-                self.tokens.append(st.Token(st.TokenKind.GT, ">"))
+                self.tokens.append(ST(STK.GT, ">"))
                 self.advance()
             elif curr == "(":
-                self.tokens.append(st.Token(st.TokenKind.LPAREN, "("))
+                self.tokens.append(ST(STK.LPAREN, "("))
                 self.advance()
             elif curr == ")":
-                self.tokens.append(st.Token(st.TokenKind.RPAREN, ")"))
+                self.tokens.append(ST(STK.RPAREN, ")"))
                 self.advance()
             elif curr == "{":
-                self.tokens.append(st.Token(st.TokenKind.LBRACE, "{"))
+                self.tokens.append(ST(STK.LBRACE, "{"))
                 self.advance()
             elif curr == "}":
-                self.tokens.append(st.Token(st.TokenKind.RBRACE, "}"))
+                self.tokens.append(ST(STK.RBRACE, "}"))
                 self.advance()
             elif curr == ",":
-                self.tokens.append(st.Token(st.TokenKind.COMMA, ","))
+                self.tokens.append(ST(STK.COMMA, ","))
                 self.advance()
             elif curr.isdecimal():
                 self.tokens.append(self.read_number())
@@ -124,7 +126,7 @@ class Lexer:
             elif curr.isalnum() or curr == "_":
                 self.tokens.append(self.read_ident())
             elif curr == "\n":
-                self.tokens.append(st.Token(st.TokenKind.NEWLINE, "\n"))
+                self.tokens.append(ST(STK.NEWLINE, "\n"))
                 self.advance()
-        self.tokens.append(st.Token(st.TokenKind.EOF))
+        self.tokens.append(ST(STK.EOF))
         return self.tokens

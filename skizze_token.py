@@ -1,7 +1,7 @@
 from enum import Enum, auto
 
 
-class TokenKind(Enum):
+class SkizzeTokenKind(Enum):
     # Literals
     NUMBER = auto()
     STRING = auto()
@@ -43,26 +43,26 @@ class TokenKind(Enum):
     EOF = auto()
 
 
-KEYWORDS = {
-    "let": TokenKind.LET,
-    "fn": TokenKind.FN,
-    "if": TokenKind.IF,
-    "else": TokenKind.ELSE,
-    "while": TokenKind.WHILE,
-    "print": TokenKind.PRINT,
-    "true": TokenKind.TRUE,
-    "false": TokenKind.FALSE,
+SKIZZE_KEYWORDS = {
+    "let": SkizzeTokenKind.LET,
+    "fn": SkizzeTokenKind.FN,
+    "if": SkizzeTokenKind.IF,
+    "else": SkizzeTokenKind.ELSE,
+    "while": SkizzeTokenKind.WHILE,
+    "print": SkizzeTokenKind.PRINT,
+    "true": SkizzeTokenKind.TRUE,
+    "false": SkizzeTokenKind.FALSE,
 }
 
 
-class Token:
-    def __init__(self, type: TokenKind, value=None):
+class SkizzeToken:
+    def __init__(self, type: SkizzeTokenKind, value=None):
         self.type = type
         self.value = value
 
     def __repr__(self):
         return (
-            f"Token({self.type}, {self.value!r})"
+            f"SkizzeToken({self.type}, {self.value!r})"
             if self.value is not None
-            else f"Token({self.type})"
+            else f"SkizzeToken({self.type})"
         )
