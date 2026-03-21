@@ -5,7 +5,6 @@ class SkizzeTokenKind(Enum):
     # Literals
     NUMBER = auto()
     STRING = auto()
-    BOOL = auto()
 
     # Identifiers / keywords
     IDENT = auto()
