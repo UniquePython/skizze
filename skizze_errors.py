@@ -1,12 +1,17 @@
 class SkizzeError(Exception):
-    def __init__(self, message, line=None):
+    def __init__(self, message, line=None, col=None):
         self.message = message
         self.line = line
+        self.col = col
 
     def __str__(self):
+        err = f"[Skizze {self.kind}]"
         if self.line:
-            return f"[Skizze {self.kind}] Line {self.line}: {self.message}"
-        return f"[Skizze {self.kind}]: {self.message}"
+            err += f" Line {self.line}"
+        if self.col:
+            err += f", Col {self.col}"
+        err += f": {self.message}"
+        return err
 
 
 class SkizzeLexError(SkizzeError):

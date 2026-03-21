@@ -9,6 +9,7 @@ class SkizzeLexer:
         self.source = source
         self.pos = 0  # current character index
         self.line = 1
+        self.col = 1
         self.tokens = []
 
     def current(self):
@@ -16,6 +17,7 @@ class SkizzeLexer:
 
     def advance(self):
         self.pos += 1
+        self.col += 1
 
     def peek(self):
         return None if self.pos + 1 >= len(self.source) else self.source[self.pos + 1]
@@ -38,7 +40,7 @@ class SkizzeLexer:
                 seen_dot = True
             num += self.current()
             self.advance()
-        return ST(STK.NUMBER, float(num) if seen_dot else int(num), self.line)
+        return ST(STK.NUMBER, float(num) if seen_dot else int(num), self.line, self.col)
 
     def read_string(self):
         self.advance()  # skip opening "
@@ -47,7 +49,7 @@ class SkizzeLexer:
             string += self.current()
             self.advance()
         self.advance()  # skip closing "
-        return ST(STK.STRING, string, self.line)
+        return ST(STK.STRING, string, self.line, self.col)
 
     def read_ident(self):
         ident = ""
@@ -58,7 +60,7 @@ class SkizzeLexer:
             self.advance()
         kind = SK.get(ident, STK.IDENT)
         value = ident if kind == STK.IDENT else None
-        return ST(kind, value, self.line)
+        return ST(kind, value, self.line, self.col)
 
     def tokenize(self):
         while self.current() is not None:
@@ -67,62 +69,64 @@ class SkizzeLexer:
             if curr is None:
                 break
             if curr == "+":
-                self.tokens.append(ST(STK.PLUS, "+", self.line))
+                self.tokens.append(ST(STK.PLUS, "+", self.line, self.col))
                 self.advance()
             elif curr == "-":
-                self.tokens.append(ST(STK.MINUS, "-", self.line))
+                self.tokens.append(ST(STK.MINUS, "-", self.line, self.col))
                 self.advance()
             elif curr == "*":
-                self.tokens.append(ST(STK.STAR, "*", self.line))
+                self.tokens.append(ST(STK.STAR, "*", self.line, self.col))
                 self.advance()
             elif curr == "/":
-                self.tokens.append(ST(STK.SLASH, "/", self.line))
+                self.tokens.append(ST(STK.SLASH, "/", self.line, self.col))
                 self.advance()
             elif curr == "=":
                 if self.peek() == "=":
                     self.advance()
-                    self.tokens.append(ST(STK.EQ, "==", self.line))
+                    self.tokens.append(ST(STK.EQ, "==", self.line, self.col))
                     self.advance()
                 else:
-                    self.tokens.append(ST(STK.ASSIGN, "=", self.line))
+                    self.tokens.append(ST(STK.ASSIGN, "=", self.line, self.col))
                     self.advance()
             elif curr == "!":
                 if self.peek() == "=":
                     self.advance()
-                    self.tokens.append(ST(STK.NEQ, "!=", self.line))
+                    self.tokens.append(ST(STK.NEQ, "!=", self.line, self.col))
                     self.advance()
                 else:
-                    raise SkizzeLexError("Unexpected character: '!'", self.line)
+                    raise SkizzeLexError(
+                        "Unexpected character: '!'", self.line, self.col
+                    )
             elif curr == "<":
                 if self.peek() == "=":
                     self.advance()
-                    self.tokens.append(ST(STK.LTE, "<=", self.line))
+                    self.tokens.append(ST(STK.LTE, "<=", self.line, self.col))
                     self.advance()
                 else:
-                    self.tokens.append(ST(STK.LT, "<", self.line))
+                    self.tokens.append(ST(STK.LT, "<", self.line, self.col))
                     self.advance()
             elif curr == ">":
                 if self.peek() == "=":
                     self.advance()
-                    self.tokens.append(ST(STK.GTE, ">=", self.line))
+                    self.tokens.append(ST(STK.GTE, ">=", self.line, self.col))
                     self.advance()
                 else:
-                    self.tokens.append(ST(STK.GT, ">", self.line))
+                    self.tokens.append(ST(STK.GT, ">", self.line, self.col))
                     self.advance()
             elif curr == "(":
-                self.tokens.append(ST(STK.LPAREN, "(", self.line))
+                self.tokens.append(ST(STK.LPAREN, "(", self.line, self.col))
                 self.advance()
             elif curr == ")":
-                self.tokens.append(ST(STK.RPAREN, ")", self.line))
+                self.tokens.append(ST(STK.RPAREN, ")", self.line, self.col))
                 self.advance()
             elif curr == "{":
-                self.tokens.append(ST(STK.LBRACE, "{", self.line))
+                self.tokens.append(ST(STK.LBRACE, "{", self.line, self.col))
                 self.advance()
             elif curr == "}":
-                self.tokens.append(ST(STK.RBRACE, "}", self.line))
+                self.tokens.append(ST(STK.RBRACE, "}", self.line, self.col))
                 self.advance()
             elif curr == ",":
-                self.tokens.append(ST(STK.COMMA, ",", self.line))
+                self.tokens.append(ST(STK.COMMA, ",", self.line, self.col))
                 self.advance()
             elif curr.isdecimal():
                 self.tokens.append(self.read_number())
@@ -131,8 +135,9 @@ class SkizzeLexer:
             elif curr.isalnum() or curr == "_":
                 self.tokens.append(self.read_ident())
             elif curr == "\n":
-                self.tokens.append(ST(STK.NEWLINE, "\n", self.line))
+                self.tokens.append(ST(STK.NEWLINE, "\n", self.line, self.col))
                 self.line += 1
                 self.advance()
+                self.col = 1
         self.tokens.append(ST(STK.EOF))
         return self.tokens

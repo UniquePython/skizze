@@ -56,10 +56,11 @@ SKIZZE_KEYWORDS = {
 
 
 class SkizzeToken:
-    def __init__(self, type: SkizzeTokenKind, value=None, line=None):
+    def __init__(self, type: SkizzeTokenKind, value=None, line=None, col=None):
         self.type = type
         self.value = value
         self.line = line
+        self.col = col
 
     def __repr__(self):
         return (
