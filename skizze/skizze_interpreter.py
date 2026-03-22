@@ -66,26 +66,27 @@ class SkizzeInterpreter:
         elif isinstance(node, sast.SkizzeIfNode):
             cond = self.evaluate(node.condition, env)
             if cond:
-                self.evaluate(node.then_block, SkizzeEnvironment(parent=env))
+                return self.evaluate(node.then_block, SkizzeEnvironment(parent=env))
             elif node.else_block:
-                self.evaluate(node.else_block, SkizzeEnvironment(parent=env))
+                return self.evaluate(node.else_block, SkizzeEnvironment(parent=env))
         elif isinstance(node, sast.SkizzeWhileNode):
+            result = None
             while self.evaluate(node.condition, env):
-                self.evaluate(node.body, SkizzeEnvironment(parent=env))
+                result = self.evaluate(node.body, SkizzeEnvironment(parent=env))
+            return result
         elif isinstance(node, sast.SkizzeFnNode):
-            node.closure_env = env
-            env.set(node.name, node)
+            env.set(node.name, sast.SkizzeFnValue(node, env))
         elif isinstance(node, sast.SkizzeCallNode):
             fn = env.get(node.name)
-            if not isinstance(fn, sast.SkizzeFnNode):
+            if not isinstance(fn, sast.SkizzeFnValue):
                 raise SkizzeRuntimeError(f"{node.name} is not a function")
-            if len(node.args) != len(fn.params):
+            if len(node.args) != len(fn.fn_node.params):
                 raise SkizzeRuntimeError(
-                    f"{node.name} expects {len(fn.params)} args, got {len(node.args)}"
+                    f"{node.name} expects {len(fn.fn_node.params)} args, got {len(node.args)}"
                 )
             new_env = SkizzeEnvironment(parent=fn.closure_env)
-            for param, arg in zip(fn.params, node.args):
+            for param, arg in zip(fn.fn_node.params, node.args):
                 new_env.set(param, self.evaluate(arg, env))
-            return self.evaluate(fn.body, new_env)
+            return self.evaluate(fn.fn_node.body, new_env)
         else:
             raise SkizzeRuntimeError(f"Unknown node type: {type(node).__name__}")
