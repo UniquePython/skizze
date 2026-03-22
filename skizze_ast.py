@@ -29,6 +29,12 @@ class SkizzeLetNode:
 
 
 @dataclass
+class SkizzeAssignNode:
+    name: str
+    value: object
+
+
+@dataclass
 class SkizzeBinOpNode:
     left: object
     op: str
@@ -89,6 +95,10 @@ def pprint_ast(node, indent=0):
 
         case SkizzeLetNode(name=n, value=v):
             print(f"{pad}Let {n!r} =")
+            pprint_ast(v, indent + 1)
+
+        case SkizzeAssignNode(name=n, value=v):
+            print(f"{pad}Assign {n!r} =")
             pprint_ast(v, indent + 1)
 
         case SkizzeFnNode(name=n, params=p, body=b):

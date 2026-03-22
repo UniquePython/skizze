@@ -14,6 +14,11 @@ class SkizzeParser:
             return self.tokens[-1]  # always EOF
         return self.tokens[self.pos]
 
+    def peek(self):
+        if self.pos + 1 >= len(self.tokens):
+            return self.tokens[-1]  # EOF
+        return self.tokens[self.pos + 1]
+
     def advance(self):
         tok = self.current()
         self.pos += 1
@@ -52,7 +57,15 @@ class SkizzeParser:
             return self.parse_while()
         if t == STK.PRINT:
             return self.parse_print()
+        if t == STK.IDENT and self.peek().type == STK.ASSIGN:
+            return self.parse_assign()
         return self.parse_expression()
+
+    def parse_assign(self):
+        name = self.advance().value
+        self.expect(STK.ASSIGN)
+        value = self.parse_expression()
+        return sast.SkizzeAssignNode(name, value)
 
     def parse_let(self):
         self.advance()
