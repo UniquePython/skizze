@@ -112,6 +112,7 @@ class SkizzeParser:
         return sast.SkizzePrintNode(value)
 
     def parse_block(self):
+        self.skip_newlines()
         self.expect(STK.LBRACE)
         statements = []
         self.skip_newlines()

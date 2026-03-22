@@ -1,22 +1,42 @@
-from skizze_ast import pprint_ast
+from skizze_errors import SkizzeError
+from skizze_interpreter import SkizzeInterpreter
 from skizze_lexer import SkizzeLexer
 from skizze_parser import SkizzeParser
 
-src = """
+source = """
 let x = 10
 let y = 20
-fn add(a, b) {
+
+fn add(a, b)
+{
     a + b
 }
+
 let result = add(x, y)
+
 if result > 25 {
     print("big")
 } else {
     print("small")
 }
+
+let i = 0
+
+while i < 5 {
+    print(i)
+    i = i + 1
+}
 """
 
-tokens = SkizzeLexer(src).tokenize()
-ast = SkizzeParser(tokens).parse()
-for node in ast.statements:
-    pprint_ast(node)
+try:
+    lexer = SkizzeLexer(source)
+    tokens = lexer.tokenize()
+
+    parser = SkizzeParser(tokens)
+    ast = parser.parse()
+
+    interpreter = SkizzeInterpreter()
+    interpreter.run(ast)
+except SkizzeError as e:
+    print(e)
+    exit(1)
