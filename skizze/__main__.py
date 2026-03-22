@@ -1,3 +1,3 @@
-from skizze_cli import main
+from skizze.skizze_cli import main
 
 main()
