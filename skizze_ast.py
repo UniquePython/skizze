@@ -70,6 +70,7 @@ class SkizzeFnNode:
     name: str
     params: list  # list of strings
     body: SkizzeBlockNode
+    closure_env: object = None
 
 
 @dataclass

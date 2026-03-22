@@ -1,7 +1,7 @@
 from skizze_errors import SkizzeRuntimeError
 
 
-class Environment:
+class SkizzeEnvironment:
     def __init__(self, parent=None):
         self.vars = {}
         self.parent = parent
