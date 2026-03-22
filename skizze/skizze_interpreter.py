@@ -1,6 +1,6 @@
-import skizze_ast as sast
-from skizze_env import SkizzeEnvironment
-from skizze_errors import SkizzeRuntimeError
+import skizze.skizze_ast as sast
+from skizze.skizze_env import SkizzeEnvironment
+from skizze.skizze_errors import SkizzeRuntimeError
 
 
 class SkizzeInterpreter:

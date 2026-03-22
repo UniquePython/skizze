@@ -1,7 +1,7 @@
-import skizze_ast as sast
-from skizze_errors import SkizzeSyntaxError
-from skizze_token import SkizzeToken as ST
-from skizze_token import SkizzeTokenKind as STK
+import skizze.skizze_ast as sast
+from skizze.skizze_errors import SkizzeSyntaxError
+from skizze.skizze_token import SkizzeToken as ST
+from skizze.skizze_token import SkizzeTokenKind as STK
 
 
 class SkizzeParser:

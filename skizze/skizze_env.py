@@ -1,4 +1,4 @@
-from skizze_errors import SkizzeRuntimeError
+from skizze.skizze_errors import SkizzeRuntimeError
 
 
 class SkizzeEnvironment:

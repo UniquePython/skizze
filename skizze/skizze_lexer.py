@@ -1,7 +1,7 @@
-from skizze_errors import SkizzeLexError
-from skizze_token import SKIZZE_KEYWORDS as SK
-from skizze_token import SkizzeToken as ST
-from skizze_token import SkizzeTokenKind as STK
+from skizze.skizze_errors import SkizzeLexError
+from skizze.skizze_token import SKIZZE_KEYWORDS as SK
+from skizze.skizze_token import SkizzeToken as ST
+from skizze.skizze_token import SkizzeTokenKind as STK
 
 
 class SkizzeLexer:
